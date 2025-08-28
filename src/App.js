@@ -20,6 +20,7 @@ import OrderDetail from "./pages/OrderDetail";
 import ProductStatistics from "./pages/ProductStatistics";
 import OrderStatistics from "./pages/OrderStatistics";
 import InventoryStatistics from "./pages/InventoryStatistics";
+import AdminChatDashboard from "./pages/AdminChatDashboard";
 import ChangePassword from "./pages/ChangePassword";
 
 function App() {
@@ -110,7 +111,16 @@ function App() {
               <CustomerList />
             </AdminLayout>
           } />
-
+        <Route
+          path="/chat"
+          element={
+            <PrivateRoute>
+              <AdminLayout>
+                <AdminChatDashboard />
+              </AdminLayout>
+            </PrivateRoute>
+          }
+        />
 
         <Route path="/admin/customers/:id"
           element={
@@ -167,8 +177,6 @@ function App() {
             </AdminLayout>
           }
         />
-
-
       </Routes>
     </Router>
   );
