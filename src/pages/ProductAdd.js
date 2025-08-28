@@ -165,12 +165,12 @@ export default function ProductAdd() {
 
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label>Tên sản phẩm</label>
+          <h3><strong>Tên sản phẩm</strong></h3>
           <input name="product-name" value={name} onChange={(e) => setName(e.target.value)} required />
         </div>
 
         <div className="form-group">
-          <label>Ảnh đại diện</label>
+          <h3><strong>Ảnh đại diện</strong></h3>
           <input
             type="file"
             accept="image/*"
@@ -188,7 +188,7 @@ export default function ProductAdd() {
         </div>
 
         <div className="form-group">
-          <label>Chọn nhiều ảnh</label>
+          <h3><strong>Chọn nhiều ảnh</strong></h3>
           <input type="file" multiple accept="image/*" onChange={handleImageListChange} />
           <div className="preview-list">
             {imagePreviews.map((src, idx) => (
@@ -200,7 +200,7 @@ export default function ProductAdd() {
         </div>
 
         <div className="form-group">
-          <label>Thêm biến thể (Màu + Size + Số lượng)</label>
+          <h3><strong>Thêm biến thể (Màu + Size + Số lượng)</strong></h3>
           <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginBottom: "10px" }}>
             <input
               type="text"
@@ -310,7 +310,7 @@ export default function ProductAdd() {
 
         </div>
         <div className="form-group">
-          <label>Tổng số lượng</label>
+          <h3><strong>Tổng số lượng</strong></h3>
           <input
             type="number"
             value={variations.reduce((sum, v) => sum + Number(v.quantity || 0), 0)}
@@ -320,7 +320,7 @@ export default function ProductAdd() {
 
 
         <div className="form-group">
-          <label>Chọn các mục mô tả</label>
+          <h3><strong>Chọn các mục mô tả</strong></h3>
           <div className="desc-options">
             {descriptionFields.map((field) => (
               <label key={field._id}>
@@ -352,7 +352,7 @@ export default function ProductAdd() {
         ))}
 
         <div className="form-group">
-          <label>Giá nhập</label>
+          <h3><strong>Giá nhập</strong></h3>
           <input
             type="number"
             value={importPrice}
@@ -362,7 +362,7 @@ export default function ProductAdd() {
         </div>
 
         <div className="form-group">
-          <label>Giá bán</label>
+          <h3><strong>Giá bán</strong></h3>
           <input
             type="number"
             value={price}
@@ -373,7 +373,7 @@ export default function ProductAdd() {
 
 
         <div className="form-group">
-          <label>Danh mục</label>
+          <h3><strong>Danh mục</strong></h3>
           <select value={category} onChange={(e) => setCategory(e.target.value)}>
             <option value="">-- Chọn danh mục --</option>
             {categories.map((c) => (
@@ -383,7 +383,7 @@ export default function ProductAdd() {
         </div>
 
         <div className="form-group">
-          <label>Thương hiệu</label>
+          <h3><strong>Thương hiệu</strong></h3>
           <select value={brand} onChange={(e) => setBrand(e.target.value)}>
             <option value="">-- Chọn thương hiệu --</option>
             {brands.map((b) => (
@@ -392,20 +392,21 @@ export default function ProductAdd() {
           </select>
         </div>
 
-        <div className="form-group">
-          <label>
+        <div className="form-group" style={{width:"550px"}}>
+          <h3><strong>
             <input
               type="checkbox"
               checked={isFeatured}
               onChange={(e) => setIsFeatured(e.target.checked)}
+              style={{ transform: "scale(1.5)", cursor: "pointer", }} 
             />{" "}
-            Đánh dấu là sản phẩm nổi bật *
-          </label>
+            Đánh dấu là sản phẩm nổi bật *</strong>
+          </h3>
         </div>
 
 
         <div className="form-group">
-          <label>Trạng thái</label>
+          <h3><strong>Trạng thái</strong></h3>
           <select value={status} onChange={(e) => setStatus(e.target.value)}>
             <option>Đang bán</option>
             <option>Ngừng bán</option>

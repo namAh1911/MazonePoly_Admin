@@ -82,6 +82,7 @@
   border: 1px solid #ccc;
   border-radius: 4px;
   resize: vertical;
+  
 }
 
 .submit-btn {
@@ -195,4 +196,13 @@ input.title-input:focus {
   border: none;
   border-radius: 6px;
   cursor: pointer;
+}
+h3 {
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 2px;
+  color: #2d3748;   /* xanh đậm */
+  border-left: 4px solid #2a284f; /* viền trang trí bên trái */
+  padding-left: 8px;
 }

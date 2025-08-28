@@ -8,6 +8,16 @@ import "./Sidebar.css";
 
 export default function Sidebar() {
   const [isDashboardOpen, setIsDashboardOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  const handleLogout = () => {
+    if (window.confirm("Bạn có chắc chắn muốn đăng xuất không?")) {
+      localStorage.removeItem("adminToken");
+      localStorage.removeItem("adminInfo");
+      window.location.href = "/login";
+    }
+  };
+
 
   return (
     <div className="sidebar">
@@ -30,43 +40,54 @@ export default function Sidebar() {
 
         {isDashboardOpen && (
           <div className="submenu">
-            <NavLink to="/statistics/products" className={({ isActive }) => (isActive ? "active" : "")}>
-              Thống kê sản phẩm
-            </NavLink>
-            <NavLink to="/statistics/inventory" className={({ isActive }) => (isActive ? "active" : "")}>
-              Thống kê tồn kho
-            </NavLink>
-            <NavLink to="/statistics/orders" className={({ isActive }) => (isActive ? "active" : "")}>
-              Doanh thu & Đơn hàng
-            </NavLink>
+            <NavLink to="/statistics/products">Thống kê sản phẩm</NavLink>
+            <NavLink to="/statistics/inventory">Thống kê tồn kho</NavLink>
+            <NavLink to="/statistics/orders">Doanh thu & Đơn hàng</NavLink>
           </div>
         )}
 
-        {/* Các menu khác giữ nguyên */}
-        <NavLink to="/products" className={({ isActive }) => (isActive ? "active" : "")}>
-          <FaBoxOpen className="icon" /> Sản phẩm
-        </NavLink>
-        <NavLink to="/categories" className={({ isActive }) => (isActive ? "active" : "")}>
-          <FaTags className="icon" /> Danh mục
-        </NavLink>
-        <NavLink to="/descriptions" className={({ isActive }) => (isActive ? "active" : "")}>
-          <FaAlignLeft className="icon" /> Mô tả
-        </NavLink>
-        <NavLink to="/brands" className={({ isActive }) => (isActive ? "active" : "")}>
-          <FaShoppingBag className="icon" /> Thương hiệu
-        </NavLink>
-        <NavLink to="/sizes" className={({ isActive }) => (isActive ? "active" : "")}>
-          <FaTextHeight className="icon" /> Kích cỡ
-        </NavLink>
-        <NavLink to="/orders" className={({ isActive }) => (isActive ? "active" : "")}>
-          <FaClipboardList className="icon" /> Đơn hàng
-        </NavLink>
-        <NavLink to="/customers" className={({ isActive }) => (isActive ? "active" : "")}>
-          <FaUsers className="icon" /> Khách hàng
-        </NavLink>
-        <NavLink to="/settings" className={({ isActive }) => (isActive ? "active" : "")}>
-          <FaCogs className="icon" /> Cài đặt
-        </NavLink>
+        {/* Các menu khác */}
+        <NavLink to="/products"><FaBoxOpen className="icon" /> Sản phẩm</NavLink>
+        <NavLink to="/categories"><FaTags className="icon" /> Danh mục</NavLink>
+        <NavLink to="/descriptions"><FaAlignLeft className="icon" /> Mô tả</NavLink>
+        <NavLink to="/brands"><FaShoppingBag className="icon" /> Thương hiệu</NavLink>
+        <NavLink to="/sizes"><FaTextHeight className="icon" /> Kích cỡ</NavLink>
+        <NavLink to="/orders"><FaClipboardList className="icon" /> Đơn hàng</NavLink>
+        <NavLink to="/customers"><FaUsers className="icon" /> Khách hàng</NavLink>
+
+        {/* Menu cha: Cài đặt */}
+        <div
+          className="menu-parent"
+          onClick={() => setIsSettingsOpen(!isSettingsOpen)}
+        >
+          <FaCogs className="icon" />
+          <span style={{ flex: 1 }}>Cài đặt</span>
+          {isSettingsOpen ? (
+            <FaChevronDown className="arrow-icon" />
+          ) : (
+            <FaChevronRight className="arrow-icon" />
+          )}
+        </div>
+
+        {isSettingsOpen && (
+          <div className="submenu">
+            <NavLink to="/change-password">Đổi mật khẩu</NavLink>
+            <button
+              onClick={handleLogout}
+              style={{
+                backgroundColor: "#e63946",
+                color: "#fff",
+                padding: "10px 20px",
+                border: "none",
+                borderRadius: "8px",
+                cursor: "pointer",
+                fontWeight: "bold"
+              }}
+            >
+              Đăng xuất
+            </button>
+          </div>
+        )}
       </nav>
     </div>
   );

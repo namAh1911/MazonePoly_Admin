@@ -15,6 +15,7 @@ export default function ProductEdit() {
     const [category, setCategory] = useState("");
     const [brand, setBrand] = useState("");
     const [status, setStatus] = useState("Đang bán");
+    const [product, setProduct] = useState(null);
 
     const [categories, setCategories] = useState([]);
     const [brands, setBrands] = useState([]);
@@ -61,6 +62,7 @@ export default function ProductEdit() {
         try {
             const res = await axios.get(`${BASE_URL}/api/products/${id}`);
             const data = res.data;
+            setProduct(data);
             setName(data.name);
             setPrice(data.price);
             setImportPrice(data.import_price || "");
@@ -219,13 +221,13 @@ export default function ProductEdit() {
             <form onSubmit={handleSubmit}>
                 {/* Tên sản phẩm */}
                 <div className="form-group">
-                    <label>Tên sản phẩm</label>
+                    <h3><strong>Tên sản phẩm</strong></h3>
                     <input name="product-name" value={name} onChange={(e) => setName(e.target.value)} />
                 </div>
 
                 {/* Ảnh đại diện */}
                 <div className="form-group">
-                    <label>Ảnh đại diện</label>
+                    <h3><strong>Ảnh đại diện</strong></h3>
                     <div className="preview-list">
 
 
@@ -259,7 +261,7 @@ export default function ProductEdit() {
 
                 {/* Ảnh bổ sung */}
                 <div className="form-group">
-                    <label>Ảnh bổ sung hiện tại</label>
+                    <h3><strong>Ảnh bổ sung hiện tại</strong></h3>
                     <div className="preview-list">
                         {imagesToKeep.map((img, idx) => (
                             <div key={idx} className="preview-item">
@@ -293,8 +295,15 @@ export default function ProductEdit() {
 
                 {/* Biến thể */}
                 <div className="form-group">
-                    <label>Thêm biến thể (Màu + Size + Số lượng)</label>
-                    <div style={{ display: "flex", gap: "10px", marginBottom: "10px", flexWrap: "wrap" }}>
+                    <h3><strong>Thêm biến thể (Màu + Size + Số lượng)</strong></h3>
+                    <div
+                        style={{
+                            display: "flex",
+                            gap: "10px",
+                            marginBottom: "10px",
+                            flexWrap: "wrap",
+                        }}
+                    >
                         {/* Màu */}
                         <input
                             type="text"
@@ -312,7 +321,9 @@ export default function ProductEdit() {
                         >
                             <option value="">Size</option>
                             {sizeOptions.map((s) => (
-                                <option key={s._id} value={s.name}>{s.name}</option>
+                                <option key={s._id} value={s.name}>
+                                    {s.name}
+                                </option>
                             ))}
                         </select>
 
@@ -343,7 +354,11 @@ export default function ProductEdit() {
                                 }
                                 setVariations([
                                     ...variations,
-                                    { color: selectedColor, size: selectedSize, quantity: Number(variationQty) }
+                                    {
+                                        color: selectedColor,
+                                        size: selectedSize,
+                                        quantity: Number(variationQty),
+                                    },
                                 ]);
                                 setSelectedColor("");
                                 setSelectedSize("");
@@ -355,56 +370,98 @@ export default function ProductEdit() {
                     </div>
 
                     {/* Danh sách biến thể */}
-                    {variations.length > 0 && (
-                        <table className="variation-table" style={{ width: "100%", marginTop: "10px", borderCollapse: "collapse" }}>
-                            <thead >
-                                <tr style={{ background: "#2d3748" }}>
-                                    <th style={{ padding: "8px", border: "1px solid #ddd" }}>Màu</th>
-                                    <th style={{ padding: "8px", border: "1px solid #ddd" }}>Size</th>
-                                    <th style={{ padding: "8px", border: "1px solid #ddd" }}>Số lượng</th>
-                                    <th style={{ padding: "8px", border: "1px solid #ddd" }}>Hành động</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {variations.map((v, idx) => (
-                                    <tr key={idx}>
-                                        <td style={{ padding: "6px", border: "1px solid #ddd" }}>{v.color}</td>
-                                        <td style={{ padding: "6px", border: "1px solid #ddd" }}>{v.size}</td>
-                                        <td style={{ padding: "6px", border: "1px solid #ddd" }}>{v.quantity}</td>
-                                        <td style={{ padding: "6px", border: "1px solid #ddd" }}>
+                    <table style={{ borderCollapse: "collapse", width: "100%", marginTop: "12px" }}>
+                        <thead>
+                            <tr style={{ background: "#2d3748" }}>
+                                <th style={{ padding: "8px", border: "1px solid #ddd" }}>Màu sắc</th>
+                                <th style={{ padding: "8px", border: "1px solid #ddd" }}>Kích thước</th>
+                                <th style={{ padding: "8px", border: "1px solid #ddd" }}>Số lượng</th>
+                                <th style={{ padding: "8px", border: "1px solid #ddd" }}>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {variations.map((v, idx) => (
+                                <tr key={idx}>
+                                    <td style={{ padding: "6px", border: "1px solid #ddd" }}>
+                                        <input
+                                            type="text"
+                                            value={v.color}
+                                            disabled={product?.hasOrders}
+                                            onChange={(e) => {
+                                                const newVars = [...variations];
+                                                newVars[idx].color = e.target.value;
+                                                setVariations(newVars);
+                                            }}
+                                            style={{ width: "100px" }}
+                                        />
+                                    </td>
+                                    <td style={{ padding: "6px", border: "1px solid #ddd" }}>
+                                        <select
+                                            value={v.size}
+                                            disabled={product?.hasOrders}
+                                            onChange={(e) => {
+                                                const newVars = [...variations];
+                                                newVars[idx].size = e.target.value;
+                                                setVariations(newVars);
+                                            }}
+                                            style={{ width: "100px" }}
+                                        >
+                                            {sizeOptions.map((s) => (
+                                                <option key={s._id} value={s.name}>
+                                                    {s.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </td>
+                                    <td style={{ padding: "6px", border: "1px solid #ddd" }}>
+                                        <input
+                                            type="number"
+                                            value={v.quantity}
+                                            disabled={product?.hasOrders}
+                                            onChange={(e) => {
+                                                const newVars = [...variations];
+                                                newVars[idx].quantity = Number(e.target.value);
+                                                setVariations(newVars);
+                                            }}
+                                            style={{ width: "80px" }}
+                                        />
+                                    </td>
+                                    <td style={{ padding: "6px", border: "1px solid #ddd" }}>
+                                        {product?.hasOrders ? (
                                             <button
                                                 type="button"
-                                                className="btn-delete"
-                                                style={{ marginRight: "6px" }}
+                                                className="btn-save"
+                                                disabled
+                                                style={{ backgroundColor: "#ef6161ff", cursor: "not-allowed", color:"#fff" }}
+                                            >
+                                                Không thể sửa
+                                            </button>
+                                        ) : (
+                                            <button
+                                                type="button"
+                                                className="btn-save"
                                                 onClick={() => {
-                                                    setSelectedColor(v.color);
-                                                    setSelectedSize(v.size);
-                                                    setVariationQty(v.quantity);
-                                                    // xoá cái cũ ra để nhập lại rồi add
-                                                    setVariations(variations.filter((_, i) => i !== idx));
+                                                    alert("Đã lưu chỉnh sửa biến thể!");
+                                                    // TODO: call API update backend
                                                 }}
                                             >
-                                                Xóa
+                                                Lưu
                                             </button>
-                                            {/* <button
-                type="button"
-                className="btn-delete"
-                onClick={() => setVariations(variations.filter((_, i) => i !== idx))}
-              >
-                Xoá
-              </button> */}
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    )}
+                                        )}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+
+
                 </div>
+
 
 
                 {/* Tổng số lượng */}
                 <div className="form-group">
-                    <label>Tổng số lượng</label>
+                    <h3><strong>Tổng số lượng</strong></h3>
                     <input
                         type="number"
                         readOnly
@@ -414,7 +471,7 @@ export default function ProductEdit() {
 
                 {/* Mô tả */}
                 <div className="form-group">
-                    <label>Chọn các mục mô tả</label>
+                    <h3><strong>Chọn các mục mô tả</strong></h3>
                     <div className="desc-options">
                         {descriptionFields.map((field) => (
                             <label key={field._id}>
@@ -446,7 +503,7 @@ export default function ProductEdit() {
 
                 {/* Giá, danh mục, thương hiệu, trạng thái */}
                 <div className="form-group">
-                    <label>Giá nhập</label>
+                    <h3><strong>Giá nhập</strong></h3>
                     <input
                         type="number"
                         value={importPrice}
@@ -455,12 +512,12 @@ export default function ProductEdit() {
                 </div>
 
                 <div className="form-group">
-                    <label>Giá bán</label>
+                    <h3><strong>Giá bán</strong></h3>
                     <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} />
                 </div>
 
                 <div className="form-group">
-                    <label>Danh mục</label>
+                    <h3><strong>Danh mục</strong></h3>
                     <select value={category} onChange={(e) => setCategory(e.target.value)}>
                         <option value="">-- Chọn danh mục --</option>
                         {categories.map((c) => (
@@ -470,7 +527,7 @@ export default function ProductEdit() {
                 </div>
 
                 <div className="form-group">
-                    <label>Thương hiệu</label>
+                    <h3><strong>Thương hiệu</strong></h3>
                     <select value={brand} onChange={(e) => setBrand(e.target.value)}>
                         <option value="">-- Chọn thương hiệu --</option>
                         {brands.map((b) => (
@@ -480,7 +537,7 @@ export default function ProductEdit() {
                 </div>
 
                 <div className="form-group">
-                    <label>Trạng thái</label>
+                    <h3><strong>Trạng thái</strong></h3>
                     <select value={status} onChange={(e) => setStatus(e.target.value)}>
                         <option>Đang bán</option>
                         <option>Ngừng bán</option>

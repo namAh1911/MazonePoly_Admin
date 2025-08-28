@@ -62,7 +62,6 @@ export default function CustomerDetail() {
                     <tr><th>Họ tên</th><td>{user.full_name}</td></tr>
                     <tr><th>Email</th><td>{user.email}</td></tr>
                     <tr><th>SĐT</th><td>{user.phone_number || "Chưa có"}</td></tr>
-                    <tr><th>SĐT giao hàng</th><td>{user.shipping_phone_number || "Chưa có"}</td></tr>
                     <tr><th>Giới tính</th><td>{genderText(user.gender)}</td></tr>
                     <tr><th>Ngày sinh</th><td>{user.date_of_birth ? moment(user.date_of_birth).format("DD/MM/YYYY") : "Chưa cập nhật"}</td></tr>
                     <tr>
@@ -73,7 +72,6 @@ export default function CustomerDetail() {
                             </Tag>
                         </td>
                     </tr>
-                    <tr><th>Xác minh SĐT</th><td>{user.is_phone_verified ? "Đã xác minh" : "Chưa xác minh"}</td></tr>
                     <tr><th>Vai trò</th><td>{roleText(user.role)}</td></tr>
                     <tr><th>Google ID</th><td>{user.google_id || "Không có"}</td></tr>
                     <tr><th>Ngày tạo</th><td>{moment(user.created_at).format("DD/MM/YYYY HH:mm")}</td></tr>

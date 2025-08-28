@@ -20,6 +20,7 @@ import OrderDetail from "./pages/OrderDetail";
 import ProductStatistics from "./pages/ProductStatistics";
 import OrderStatistics from "./pages/OrderStatistics";
 import InventoryStatistics from "./pages/InventoryStatistics";
+import ChangePassword from "./pages/ChangePassword";
 
 function App() {
   return (
@@ -150,11 +151,19 @@ function App() {
             </AdminLayout>
           }
         />
-         <Route
+        <Route
           path="/statistics/inventory"
           element={
             <AdminLayout>
               <InventoryStatistics />
+            </AdminLayout>
+          }
+        />
+        <Route
+          path="/change-password"
+          element={
+            <AdminLayout>
+              <ChangePassword />
             </AdminLayout>
           }
         />

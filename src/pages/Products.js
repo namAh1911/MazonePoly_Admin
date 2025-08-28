@@ -5,13 +5,29 @@ import { useNavigate } from "react-router-dom";
 import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
 import ProductCard from "../components/ProductCard";
 import { BASE_URL } from "../config";
+import { Modal, Button, Input } from "antd";
 
-export default function Products() {
+export default function Products({ onResults }) {
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();
   const [restockOpen, setRestockOpen] = useState(false);
   const [restockTarget, setRestockTarget] = useState(null);
   const [restockRows, setRestockRows] = useState([]); // {color,size,currentQty,addQty}
+
+  // state cho modal xoá
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [confirmText, setConfirmText] = useState("");
+  const [keyword, setKeyword] = useState("");
+  const [sort, setSort] = useState("");
+
+  // mở modal khi click xoá
+  const openDeleteModal = (prod) => {
+    setDeleteTarget(prod);
+    setConfirmText("");
+    setDeleteOpen(true);
+  };
+
 
   useEffect(() => {
     fetchProducts();
@@ -25,6 +41,23 @@ export default function Products() {
       console.error("Lỗi tải sản phẩm", err);
     }
   };
+  const handleSearch = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/api/products/search`, {
+        params: {
+          name: keyword,   // đúng với backend
+          // category: nếu muốn lọc theo danh mục thì thêm
+          sort: sort,      // cái này backend chưa xử lý, sẽ nói thêm bên dưới
+        },
+      });
+      setProducts(res.data);
+      if (onResults) onResults(res.data);
+    } catch (err) {
+      console.error("Search error:", err);
+    }
+  };
+
+
 
   // Hàm toggle trạng thái nổi bật
   const handleToggleFeatured = async (id) => {
@@ -42,17 +75,17 @@ export default function Products() {
     }
   };
 
-  const handleDeleteProduct = async (id) => {
-    const confirm = window.confirm("Bạn có chắc chắn muốn xoá sản phẩm này?");
-    if (!confirm) return;
-
+  // gọi API xoá
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
     try {
-      await axios.delete(`${BASE_URL}/api/products/${id}`);
-      setProducts(products.filter((p) => p._id !== id)); // Cập nhật danh sách
-      alert("Đã xoá sản phẩm!");
+      await axios.delete(`${BASE_URL}/api/products/${deleteTarget._id}`);
+      setProducts((prev) => prev.filter((p) => p._id !== deleteTarget._id));
+      setDeleteOpen(false);
+      alert("✅ Đã xoá sản phẩm vĩnh viễn!");
     } catch (err) {
       console.error("Lỗi xoá sản phẩm", err);
-      alert("Không thể xoá sản phẩm");
+      alert("⚠️ Không thể xoá sản phẩm");
     }
   };
 
@@ -109,6 +142,38 @@ export default function Products() {
 
   return (
     <div className="product-page">
+      {/* Modal xác nhận xoá */}
+      <Modal
+        title="Xác nhận xóa sản phẩm"
+        open={deleteOpen}
+        onCancel={() => setDeleteOpen(false)}
+        footer={[
+          <Button key="cancel" onClick={() => setDeleteOpen(false)}>
+            Hủy
+          </Button>,
+          <Button
+            key="delete"
+            danger
+            disabled={confirmText !== "XÓA"}
+            onClick={handleDelete}
+          >
+            Xóa vĩnh viễn
+          </Button>,
+        ]}
+      >
+        <p>
+          Bạn có chắc chắn muốn xóa sản phẩm{" "}
+          <b>{deleteTarget?.name}</b> không? <br />
+          Hành động này sẽ xóa <b>vĩnh viễn</b> khỏi hệ thống, bao gồm cả dữ liệu
+          trong thống kê và <b>không thể hoàn tác</b>.
+        </p>
+        <p>Vui lòng gõ <b>XÓA</b> vào ô bên dưới để xác nhận:</p>
+        <Input
+          value={confirmText}
+          onChange={(e) => setConfirmText(e.target.value)}
+          placeholder="Nhập XÓA để xác nhận"
+        />
+      </Modal>
       {restockOpen && (
         <div className="modal-backdrop">
           <div className="modal">
@@ -195,14 +260,22 @@ export default function Products() {
         </div>
 
         <div className="product-search">
-          <input name="ip-search" placeholder="...Tìm theo tên sản phẩm" />
-          <select>
-            <option>Tên A-Z</option>
-            <option>Tên Z-A</option>
-            <option>Giá tăng</option>
-            <option>Giá giảm</option>
+          <input
+            name="ip-search"
+            placeholder="...Tìm theo tên sản phẩm"
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+          />
+          <select value={sort} onChange={(e) => setSort(e.target.value)}>
+            <option value="">-Sắp xếp-</option>
+            <option value="name_asc">Tên A-Z</option>
+            <option value="name_desc">Tên Z-A</option>
+            <option value="price_asc">Giá tăng</option>
+            <option value="price_desc">Giá giảm</option>
           </select>
-          <button className="btn-search">Tìm kiếm</button>
+          <button className="btn-search" onClick={handleSearch}>
+            Tìm kiếm
+          </button>
         </div>
       </div>
 
@@ -253,8 +326,8 @@ export default function Products() {
                       onClick={() => navigate(`/products/edit/${prod._id}`)}
                     />
                     <FaTrash
-                      title="Xoá"
-                      onClick={() => handleDeleteProduct(prod._id)}
+                      title="Xoá vĩnh viễn"
+                      onClick={() => openDeleteModal(prod)}
                       style={{ color: "red", cursor: "pointer" }}
                     />
                   </div>
