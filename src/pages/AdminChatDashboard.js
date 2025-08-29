@@ -458,7 +458,7 @@ const AdminChatDashboard = () => {
                         </div>
                       </div>
                       <div className="session-meta">
-                        {getSessionStatus(session)}
+                        {/* {getSessionStatus(session)} */}
                         <span className={`online-status ${isOnline ? 'online' : 'offline'}`}>
                           {isOnline ? '🟢 Online' : '🔴 Offline'}
                         </span>
